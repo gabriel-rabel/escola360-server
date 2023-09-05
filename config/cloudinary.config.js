@@ -18,7 +18,7 @@ cloudinaryInst.config({
 const storage = new CloudinaryStorage({
    cloudinary: cloudinaryInst,
    params: {
-      folder: "Projeto",
+      folder: "Escola360",
       allowed_formats: ["jpg", "png", "pdf"],
    },
 });
