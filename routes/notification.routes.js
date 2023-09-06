@@ -28,7 +28,26 @@ notfRouter.post("/create", isAuth, async (req, res) => {
     return res.status(500).json(error);
   }
 });
-export default notfRouter;
+
+//edit notification
+// http://localhost:4000/notification/edit/:id_notification
+notfRouter.put("/edit/:id_notification", isAuth, async (req, res) => {
+  try {
+    const id_notification = req.params.id_notification;
+    const form = req.body;
+
+    const updatedNotification = await NotificationModel.findByIdAndUpdate(
+      id_notification,
+      { ...form },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json(updatedNotification);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
 
 // deletar notificacao
 // http://localhost:4000/notification/delete/:id
@@ -51,3 +70,5 @@ notfRouter.delete("/delete/:id_notification", isAuth, async (req, res) => {
     return res.status(500).json(error);
   }
 });
+
+export default notfRouter;
