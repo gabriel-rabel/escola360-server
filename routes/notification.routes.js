@@ -5,7 +5,8 @@ import NotificationModel from "../model/notification.model.js";
 
 const notfRouter = express.Router();
 
-//criar um job
+//criar uma notificacao
+// http://localhost:4000/notification/create
 notfRouter.post("/create", isAuth, async (req, res) => {
   try {
     const form = req.body;
@@ -28,3 +29,25 @@ notfRouter.post("/create", isAuth, async (req, res) => {
   }
 });
 export default notfRouter;
+
+// deletar notificacao
+// http://localhost:4000/notification/delete/:id
+notfRouter.delete("/delete/:id_notification", isAuth, async (req, res) => {
+  try {
+    const id_notification = req.params.id_notification;
+
+    // Deletar notificacao
+    await NotificationModel.findByIdAndDelete(id_notification);
+
+    // Remover o ID da notificação da array de notificações da escola
+    // ta deletando mas esta retornando erro, verificar
+    await SchoolModel.findByIdAndUpdate(id_school, {
+      $pull: { notifications: id_notification },
+    });
+
+    return res.status(204).send();
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
