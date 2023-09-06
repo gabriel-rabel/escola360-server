@@ -1,10 +1,9 @@
 import { Schema, model} from "mongoose"
 
 const subjectSchema = new Schema({
-    title: { type: String, required: true },
+    name: { type: String, required: true },
     description: {type: String, require: true },
-    school: { type: Schema.Types.ObjectId, ref: "School", required: true },
-    active: { type: Boolean, default: true },
+    teacher: { type: String, require: true },
 },
 { timestamps: true }
 );

@@ -12,32 +12,25 @@ const schoolSchema = new Schema(
          match: /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/, // math = regex
       },
 
-      cnpj: { type: Number },
+      cnpj: { type: String },
 
       logo: {
          type: String,
          default: "https://cdn.wallpapersafari.com/92/63/wUq2AY.jpg",
       },
 
-      role: { type: String, enum: ["SCHOOL", "USER"], default: "SCHOOL" },
-
       description: {type: String},
 
-      telefone: { type: String, required: true, trim: true },
+      phone: { type: String, required: true, trim: true },
 
-      endereco: { type: String, required: true },
+      address: { type: String, required: true },
 
       passwordHash: { type: String, required: true },
 
-      active: {type: Boolean, default: true},
-
-      notifications: [ {type: Schema.Types.ObjectId, ref: "Notification"} ], 
-
-      students: [ {type: Schema.Types.ObjectId, ref: "User", required: true} ],
+      notifications: [ { type: Schema.Types.ObjectId, ref: "Notification" } ], 
 
       menu: { type: String },
    },
-   // o que mais eu posso colocar nas opcoes do schema?
    { timestamps: true }
 );
 
