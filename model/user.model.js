@@ -4,6 +4,8 @@ const userSchema = new Schema(
   {
     name: { type: String, required: true, trim: true },
 
+    parentsName: { type: String, trim: true },
+
     email: {
       type: String,
       required: true,
@@ -14,62 +16,59 @@ const userSchema = new Schema(
 
     class: { type: String, required: true },
 
-    register: { type: String, required: true, trim: true },
+    register: { type: String, required: true, trim: true, unique: true },
 
     profilePicture: {
       type: String,
       default: "https://cdn.wallpapersafari.com/92/63/wUq2AY.jpg",
     },
 
-    role: { type: String, enum: ["SCHOOL", "USER"], default: "USER" },
-
     passwordHash: { type: String, required: true },
 
     active: { type: Boolean, default: true },
 
-    grade: [{ type: Schema.Types.ObjectId, ref: "Subject" }],
+    schedule: [{ type: Schema.Types.ObjectId, ref: "Subject" }],
 
     firstBimester: [
       {
         subject: { type: Schema.Types.ObjectId, ref: "Subject" },
-        note: { type: Number },
-        missed: { type: Number },
+        note: { type: String },
+        missed: { type: String },
       },
     ],
 
     secondBimester: [
       {
         subject: { type: Schema.Types.ObjectId, ref: "Subject" },
-        note: { type: Number },
-        missed: { type: Number },
+        note: { type: String },
+        missed: { type: String },
       },
     ],
 
     thirdBimester: [
       {
         subject: { type: Schema.Types.ObjectId, ref: "Subject" },
-        note: { type: Number },
-        missed: { type: Number },
+        note: { type: String },
+        missed: { type: String },
       },
     ],
 
     fourthBimester: [
       {
         subject: { type: Schema.Types.ObjectId, ref: "Subject" },
-        note: { type: Number },
-        missed: { type: Number },
+        note: { type: String },
+        missed: { type: String },
       },
     ],
 
-    finalGrade: [
+    finalSchedule: [
       {
         subject: { type: Schema.Types.ObjectId, ref: "Subject" },
-        note: { type: Number },
-        missed: { type: Number },
+        note: { type: String },
+        missed: { type: String },
       },
     ],
   },
-  // o que mais eu posso colocar nas opcoes do schema?
   { timestamps: true }
 );
 
