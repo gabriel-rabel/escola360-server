@@ -100,6 +100,7 @@ schoolRouter.get("/profile", isAuth, async (req, res) => {
   }
 });
 
+// http://localhost:4000/school/edit
 schoolRouter.put("/edit", isAuth, async (req, res) => {
   try {
     const id_school = req.auth._id;
