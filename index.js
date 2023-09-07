@@ -7,6 +7,7 @@ import userRouter from "./routes/user.routes.js";
 import uploadRoute from "./routes/upload.routes.js";
 import notfRouter from "./routes/notification.routes.js";
 import subjectRouter from "./routes/subject.routes.js";
+import schoolRouter from "./routes/school.routes.js";
 
 dotenv.config();
 
