@@ -17,7 +17,7 @@ notfRouter.post("/create", isAuth, async (req, res) => {
       school: id_school,
     });
 
-    //adicionar o id do job recem criado dentro da array offers do school
+    //adicionar o id do job recem criado dentro da array notifications do school
     await SchoolModel.findByIdAndUpdate(id_school, {
       $push: { notifications: notfCreated._id },
     });
