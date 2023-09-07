@@ -5,6 +5,7 @@ import connectToDB from "./config/db.config.js";
 
 import userRouter from "./routes/user.routes.js";
 import uploadRoute from "./routes/upload.routes.js";
+import schoolRoute from "./routes/school.routes.js";
 
 dotenv.config();
 
@@ -17,12 +18,14 @@ app.use("/user", userRouter);
 
 app.use("/upload", uploadRoute);
 
+app.use("/school", schoolRoute);
+
 connectToDB()
-   .then(
-      app.listen(process.env.PORT, () => {
-         console.log(`Server up and running at port ${process.env.PORT}`);
-      })
-   )
-   .catch((error) => {
-      console.log("Error connecting to database: ", error);
-   });
+  .then(
+    app.listen(process.env.PORT, () => {
+      console.log(`Server up and running at port ${process.env.PORT}`);
+    })
+  )
+  .catch((error) => {
+    console.log("Error connecting to database: ", error);
+  });
