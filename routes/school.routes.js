@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import generateToken from "../config/jwt.config.js";
 import isAuth from "../middlewares/isAuth.js";
 import SchoolModel from "../model/school.model.js";
+import UserModel from "../model/user.model.js";
 
 const schoolRouter = express.Router();
 
@@ -10,7 +11,7 @@ const schoolRouter = express.Router();
 const SALT_ROUNDS = 10; // quão complexo queremos que o salt seja criado || maior o numero MAIOR a demora na criação da hash
 
 // http://localhost:4000/school/signup
-schoolRouter.post("/signup", async (req, res) => {
+schoolRouter.post("/signup", async (req, res) => { //testado funcionando 07/09/23
   try {
     const form = req.body;
 
@@ -43,12 +44,13 @@ schoolRouter.post("/signup", async (req, res) => {
     return res.status(201).json(school);
   } catch (err) {
     console.log(err);
+    console.log("caiu no erro de rota")
     return res.status(500).json(err.message);
   }
 });
 
 // http://localhost:4000/school/login
-schoolRouter.post("/login", async (req, res) => {
+schoolRouter.post("/login", async (req, res) => { //testado funcionando 07/09/23
   try {
     const form = req.body;
 
@@ -69,7 +71,7 @@ schoolRouter.post("/login", async (req, res) => {
       school.passwordHash = undefined;
 
       return res.status(200).json({
-        school: school,
+        user: school, // verificar isso creio que seja user.
         token: token,
       });
     } else {
@@ -80,12 +82,13 @@ schoolRouter.post("/login", async (req, res) => {
     }
   } catch (err) {
     console.log(err);
+    console.log("Erro de conexao ao banco de dados")
     return res.status(500).json(err.message);
   }
 });
 
 // http://localhost:4000/school/profile
-schoolRouter.get("/profile", isAuth, async (req, res) => {
+schoolRouter.get("/profile", isAuth, async (req, res) => { // testado e funcionando 07/09/23
   try {
     const id_school = req.auth._id;
 
@@ -101,7 +104,7 @@ schoolRouter.get("/profile", isAuth, async (req, res) => {
 });
 
 // http://localhost:4000/school/edit
-schoolRouter.put("/edit", isAuth, async (req, res) => {
+schoolRouter.put("/edit", isAuth, async (req, res) => { //testado e funcionando 07/09/23
   try {
     const id_school = req.auth._id;
 
@@ -114,8 +117,60 @@ schoolRouter.put("/edit", isAuth, async (req, res) => {
     return res.status(200).json(updatedSchool);
   } catch (error) {
     console.log(error);
+    console.log("Erro na rota")
     return res.status(500).json(error);
   }
 });
 
+//edicoes de usuario aluno// -->
+
+// http://localhost:4000/user/profile
+schoolRouter.get("/get_one/:id_student", isAuth, async (req, res) => { //funcionando e testado 07/09/23
+  try {
+    const id_student = req.params.id_student;
+
+    const student = await UserModel.findById(id_student).select("-passwordHash");
+
+    return res.status(200).json(student);
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json(err);
+  }
+});
+
+
+// // rota de edit para a escola editar o aluno
+schoolRouter.put("/edit_one/:id_student", isAuth, async (req, res) => { //testado e funcionando 07/09/23
+  try {
+    const id_student = req.params.id_student;
+
+    const updatedStudent = await UserModel.findByIdAndUpdate(
+      id_student,
+      { ...req.body },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json(updatedStudent);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+
+// 
+schoolRouter.delete("/delete/:id_student", isAuth, async (req, res) => { //testado e funcionando 07/09/23
+  try {
+    const id_student = req.params.id_student;
+
+    const updatedStudent = await UserModel.findByIdAndUpdate(
+      id_student,
+      { active: false },
+      { new: true, runValidators: true }
+    );
+    return res.status(200).json(updatedStudent);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
 export default schoolRouter;

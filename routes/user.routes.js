@@ -98,22 +98,6 @@ userRouter.get("/profile", isAuth, async (req, res) => {
   }
 });
 
-// http://localhost:4000/user/edit
-userRouter.put("/edit", isAuth, async (req, res) => {
-  try {
-    const id_user = req.auth._id;
 
-    const updatedUser = await UserModel.findByIdAndUpdate(
-      id_user,
-      { ...req.body },
-      { new: true, runValidators: true }
-    );
-
-    return res.status(200).json(updatedUser);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json(error);
-  }
-});
 
 export default userRouter;

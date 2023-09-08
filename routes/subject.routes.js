@@ -2,6 +2,7 @@ import express from "express";
 import isAuth from "../middlewares/isAuth.js";
 import SchoolModel from "../model/school.model.js";
 import SubjectModel from "../model/subject.model.js";
+import UserModel from "../model/user.model.js";
 
 const subjectRouter = express.Router();
 
@@ -79,5 +80,51 @@ subjectRouter.delete("/delete/:id_subject", isAuth, async (req, res) => {
     return res.status(500).json(error);
   }
 });
+
+//adicionar materia no aluno
+
+subjectRouter.post("/add_subject", isAuth, async (req, res) => {
+  try {
+    const form = req.body;
+
+    //adicionar algo na array do usuario
+    const updatedStudent = await UserModel.findByIdAndUpdate( //testado e funcionando 07/09/23
+      form.id_student,
+      {
+        $push: { schedule: form.id_subject },
+      },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json(updatedStudent);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+
+//deletar materia do usuario
+
+subjectRouter.delete("/delete_subject", isAuth, async (req, res) => {
+  try {
+    const form = req.body;
+
+    //adicionar algo na array do usuario
+    const updatedStudent = await UserModel.findByIdAndUpdate( //testado e funcionando 07/09/23
+      form.id_student,
+      {
+        $pull: { schedule: form.id_subject },
+      },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json(updatedStudent);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+
+
 
 export default subjectRouter;
