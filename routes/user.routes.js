@@ -89,9 +89,8 @@ userRouter.get("/profile", isAuth, async (req, res) => {
   try {
     const id_user = req.auth._id;
 
-    const user = await UserModel.findById(id_user).select("-passwordHash");
-
-    return res.status(200).json(user);
+    const user = await UserModel.findById(id_user).select("-passwordHash").populate("schedule").populate("firstBimester.subject").populate("secondBimester.subject").populate("thirdBimester.subject").populate("fourthBimester.subject").populate("finalSchedule.subject");
+        return res.status(200).json(user);
   } catch (err) {
     console.log(err);
     return res.status(500).json(err);
