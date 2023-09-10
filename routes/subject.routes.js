@@ -43,6 +43,19 @@ subjectRouter.get("/get_all", isAuth, async (req, res) => {
   }
 });
 
+subjectRouter.get("/get_one/:id_subject", isAuth, async (req, res) => {
+  try {
+    const id_subject = req.params.id_subject;
+    const subject = await  SubjectModel.findById(id_subject);
+
+    return res.status(200).json(subject);
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+
 //edit subject
 // http://localhost:4000/subject/edit/:id_subject
 subjectRouter.put("/edit/:id_subject", isAuth, async (req, res) => {
