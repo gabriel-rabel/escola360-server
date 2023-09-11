@@ -8,6 +8,7 @@ const notfRouter = express.Router();
 
 //get all notifications
 
+
 notfRouter.get("/get_all", isAuth, async (req, res) => {
   try {
     const notificationsAll = await NotificationModel.find();
