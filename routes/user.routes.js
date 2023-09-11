@@ -97,6 +97,19 @@ userRouter.get("/profile", isAuth, async (req, res) => {
   }
 });
 
+//GET ALL
+// http://localhost:4000/user/get_all
+userRouter.get("/get_all", isAuth, async (req, res) => {
+  try {
+    const allUsers = await UserModel.find();
+
+    return res.status(200).json(allUsers);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+
 
 
 export default userRouter;
