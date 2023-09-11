@@ -5,6 +5,19 @@ import NotificationModel from "../model/notification.model.js";
 
 const notfRouter = express.Router();
 
+
+//get all notifications
+
+notfRouter.get("/get_all", isAuth, async (req, res) => {
+  try {
+    const notificationsAll = await NotificationModel.find();
+    return res.status(200).json(notificationsAll);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+
 //criar uma notificacao
 // http://localhost:4000/notification/create
 notfRouter.post("/create", isAuth, async (req, res) => {
