@@ -140,24 +140,52 @@ schoolRouter.get("/get_one/:id_student", isAuth, async (req, res) => { //funcion
 
 
 // // rota de edit para a escola editar o aluno
-schoolRouter.put("/edit_one/:id_student", isAuth, async (req, res) => { //testado e funcionando 07/09/23
+// // http://localhost:4000/school/edit_one/:id_student
+schoolRouter.put("/edit_one/:id_student", isAuth, async (req, res) => {
   try {
     const id_student = req.params.id_student;
 
+    const updatedData = { ...req.body };
+
+    // Verifique se a senha está presente no req.body e não está vazia
+    if (updatedData.password) {
+      // Verifique a senha em relação aos requisitos
+      if (
+        !updatedData.password.match(
+          /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/gm
+        )
+      ) {
+        throw new Error(
+          "A senha não preenche os requisitos básicos. 8 caracteres. Maiúsculas e minúsculas. Números e caracteres especiais."
+        );
+      }
+
+      // Hash da nova senha
+      const salt = await bcrypt.genSalt(SALT_ROUNDS);
+      const hashedPassword = await bcrypt.hash(updatedData.password, salt);
+
+      // Atualize a senha no objeto a ser atualizado
+      updatedData.passwordHash = hashedPassword;
+
+      // Remova a senha do objeto para evitar atualizar a senha com um campo vazio
+      delete updatedData.password;
+    }
+
     const updatedStudent = await UserModel.findByIdAndUpdate(
       id_student,
-      { ...req.body },
+      updatedData,
       { new: true, runValidators: true }
     );
+    user.passwordHash = undefined;
 
     return res.status(200).json(updatedStudent);
   } catch (error) {
-    console.log(error);
-    return res.status(500).json(error);
+    console.error(error);
+    return res.status(500).json(error.message);
   }
 });
 
-// 
+// Delete Student by ID
 schoolRouter.delete("/delete/:id_student", isAuth, async (req, res) => { //testado e funcionando 07/09/23
   try {
     const id_student = req.params.id_student;
