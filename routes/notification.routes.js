@@ -6,9 +6,25 @@ import NotificationModel from "../model/notification.model.js";
 const notfRouter = express.Router();
 
 
+
+//get one notification
+notfRouter.get("/get_one/:id_notification", isAuth, async (req, res) => {
+  try {
+    const id_notification = req.params.id_notification;
+    const notification = await NotificationModel.findById(id_notification);
+
+    return res.status(200).json(notification);
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+
+
+
+
 //get all notifications
-
-
 notfRouter.get("/get_all", isAuth, async (req, res) => {
   try {
     const notificationsAll = await NotificationModel.find();
@@ -70,15 +86,15 @@ notfRouter.delete("/delete/:id_notification", isAuth, async (req, res) => {
     const id_notification = req.params.id_notification;
 
     // Deletar notificacao
-    await NotificationModel.findByIdAndDelete(id_notification);
+    const delectedNotification = await NotificationModel.findByIdAndDelete(id_notification);
 
     // Remover o ID da notificação da array de notificações da escola
     // ta deletando mas esta retornando erro, verificar
-    await SchoolModel.findByIdAndUpdate(id_school, {
-      $pull: { notifications: id_notification },
-    });
+    //await SchoolModel.findByIdAndUpdate(id_school, {
+    //  $pull: { notifications: id_notification },
+   // });
 
-    return res.status(204).send();
+   return res.status(200).json(delectedNotification);
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);
