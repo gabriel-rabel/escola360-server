@@ -213,22 +213,32 @@ schoolRouter.delete("/delete/:id_student", isAuth, async (req, res) => {
 //criar um cronograma no aluno
 // http://localhost:4000/school/schedule/create
 schoolRouter.post("/schedule/create", isAuth, async (req, res) => {
-  //rota funcionando 15/09S
   try {
     const form = req.body;
     const id_school = req.auth._id;
     const id_user = form.student;
 
-    const schCreated = await ScheduleModel.create({
-      ...form,
-      user: id_user,
-    });
+    // Obtenha a lista de IDs das matérias selecionadas
+    const selectedSubjectIds = form.subjects;
 
-    //add o id do schedule criado, dentro do array schedules do user
+    // Crie um cronograma para cada matéria selecionada
+    const createdSchedules = await Promise.all(
+      selectedSubjectIds.map(async (subjectId) => {
+        const schCreated = await ScheduleModel.create({
+          ...form,
+          user: id_user,
+          subjects: [subjectId], // Crie um cronograma com uma única matéria
+        });
+
+        return schCreated;
+      })
+    );
+
+    // Adicione os IDs dos cronogramas criados ao usuário
     const updatedStudent = await UserModel.findByIdAndUpdate(
       id_user,
       {
-        $push: { schedules: schCreated._id },
+        $push: { schedules: { $each: createdSchedules.map((s) => s._id) } },
       },
       { new: true, runValidators: true }
     );
@@ -239,6 +249,7 @@ schoolRouter.post("/schedule/create", isAuth, async (req, res) => {
     return res.status(500).json(error);
   }
 });
+
 //GET ALL SCHEDULES
 // http://localhost:4000/school/schedule/get_all
 schoolRouter.get("/schedule/get_all", isAuth, async (req, res) => {
