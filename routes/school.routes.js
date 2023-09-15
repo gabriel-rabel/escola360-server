@@ -218,8 +218,12 @@ schoolRouter.post("/schedule/create", isAuth, async (req, res) => {
     const id_school = req.auth._id;
     const id_user = form.student;
 
+    console.log("Received form data:", form);
+
     // Obtenha a lista de IDs das matérias selecionadas
     const selectedSubjectIds = form.subjects;
+
+    console.log("Selected subject IDs:", selectedSubjectIds);
 
     // Crie um cronograma para cada matéria selecionada
     const createdSchedules = await Promise.all(
@@ -229,6 +233,8 @@ schoolRouter.post("/schedule/create", isAuth, async (req, res) => {
           user: id_user,
           subjects: [subjectId], // Crie um cronograma com uma única matéria
         });
+
+        console.log("Created schedule:", schCreated);
 
         return schCreated;
       })
@@ -242,6 +248,8 @@ schoolRouter.post("/schedule/create", isAuth, async (req, res) => {
       },
       { new: true, runValidators: true }
     );
+
+    console.log("Updated student:", updatedStudent);
 
     return res.status(201).json(updatedStudent);
   } catch (error) {
