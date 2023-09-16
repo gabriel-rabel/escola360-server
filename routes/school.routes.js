@@ -255,6 +255,38 @@ schoolRouter.get("/schedule/get_all", isAuth, async (req, res) => {
     return res.status(500).json(error);
   }
 });
+
+// testando gets
+schoolRouter.get("/schedule/get/bimester1", isAuth, async (req, res) => {
+  try {
+    const schedulesBim = await ScheduleModel.find({ bimester: "1bim" });
+
+    return res.status(200).json(schedulesBim);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+
+// testando gets
+// GET SCHEDULES BY BIMESTER
+// http://localhost:4000/school/schedule/get_by_bimester/1bim
+schoolRouter.get(
+  "/schedule/get_by_bimester/:bimester",
+  isAuth,
+  async (req, res) => {
+    try {
+      const bimester = req.params.bimester;
+
+      const schedulesByBimester = await ScheduleModel.find({ bimester });
+
+      return res.status(200).json(schedulesByBimester);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  }
+);
 export default schoolRouter;
 
 //OUTRAS ROTAS DO SCHEDULE Q N TESTEI
