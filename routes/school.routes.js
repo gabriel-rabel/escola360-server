@@ -4,6 +4,7 @@ import generateToken from "../config/jwt.config.js";
 import isAuth from "../middlewares/isAuth.js";
 import SchoolModel from "../model/school.model.js";
 import UserModel from "../model/user.model.js";
+import ScheduleModel from "../model/schedule.model.js";
 
 const schoolRouter = express.Router();
 
@@ -11,7 +12,8 @@ const schoolRouter = express.Router();
 const SALT_ROUNDS = 10; // quão complexo queremos que o salt seja criado || maior o numero MAIOR a demora na criação da hash
 
 // http://localhost:4000/school/signup
-schoolRouter.post("/signup", async (req, res) => { //testado funcionando 07/09/23
+schoolRouter.post("/signup", async (req, res) => {
+  //testado funcionando 07/09/23
   try {
     const form = req.body;
 
@@ -44,13 +46,14 @@ schoolRouter.post("/signup", async (req, res) => { //testado funcionando 07/09/2
     return res.status(201).json(school);
   } catch (err) {
     console.log(err);
-    console.log("caiu no erro de rota")
+    console.log("caiu no erro de rota");
     return res.status(500).json(err.message);
   }
 });
 
 // http://localhost:4000/school/login
-schoolRouter.post("/login", async (req, res) => { //testado funcionando 07/09/23
+schoolRouter.post("/login", async (req, res) => {
+  //testado funcionando 07/09/23
   try {
     const form = req.body;
 
@@ -82,13 +85,14 @@ schoolRouter.post("/login", async (req, res) => { //testado funcionando 07/09/23
     }
   } catch (err) {
     console.log(err);
-    console.log("Erro de conexao ao banco de dados")
+    console.log("Erro de conexao ao banco de dados");
     return res.status(500).json(err.message);
   }
 });
 
 // http://localhost:4000/school/profile
-schoolRouter.get("/profile", isAuth, async (req, res) => { // testado e funcionando 07/09/23
+schoolRouter.get("/profile", isAuth, async (req, res) => {
+  // testado e funcionando 07/09/23
   try {
     const id_school = req.auth._id;
 
@@ -104,7 +108,8 @@ schoolRouter.get("/profile", isAuth, async (req, res) => { // testado e funciona
 });
 
 // http://localhost:4000/school/edit
-schoolRouter.put("/edit", isAuth, async (req, res) => { //testado e funcionando 07/09/23
+schoolRouter.put("/edit", isAuth, async (req, res) => {
+  //testado e funcionando 07/09/23
   try {
     const id_school = req.auth._id;
 
@@ -117,7 +122,7 @@ schoolRouter.put("/edit", isAuth, async (req, res) => { //testado e funcionando 
     return res.status(200).json(updatedSchool);
   } catch (error) {
     console.log(error);
-    console.log("Erro na rota")
+    console.log("Erro na rota");
     return res.status(500).json(error);
   }
 });
@@ -125,11 +130,14 @@ schoolRouter.put("/edit", isAuth, async (req, res) => { //testado e funcionando 
 //edicoes de usuario aluno// -->
 
 // http://localhost:4000/user/profile
-schoolRouter.get("/get_one/:id_student", isAuth, async (req, res) => { //funcionando e testado 07/09/23
+schoolRouter.get("/get_one/:id_student", isAuth, async (req, res) => {
+  //funcionando e testado 07/09/23
   try {
     const id_student = req.params.id_student;
 
-    const student = await UserModel.findById(id_student).select("-passwordHash");
+    const student = await UserModel.findById(id_student).select(
+      "-passwordHash"
+    );
 
     return res.status(200).json(student);
   } catch (err) {
@@ -137,7 +145,6 @@ schoolRouter.get("/get_one/:id_student", isAuth, async (req, res) => { //funcion
     return res.status(500).json(err);
   }
 });
-
 
 // // rota de edit para a escola editar o aluno
 // // http://localhost:4000/school/edit_one/:id_student
@@ -187,7 +194,8 @@ schoolRouter.put("/edit_one/:id_student", isAuth, async (req, res) => {
 });
 
 // Delete Student by ID
-schoolRouter.delete("/delete/:id_student", isAuth, async (req, res) => { //testado e funcionando 07/09/23
+schoolRouter.delete("/delete/:id_student", isAuth, async (req, res) => {
+  //testado e funcionando 07/09/23
   try {
     const id_student = req.params.id_student;
 
@@ -202,4 +210,182 @@ schoolRouter.delete("/delete/:id_student", isAuth, async (req, res) => { //testa
     return res.status(500).json(error);
   }
 });
+
+//criar um cronograma no aluno
+// http://localhost:4000/school/schedule/create
+schoolRouter.post("/schedule/create", isAuth, async (req, res) => {
+  try {
+    const form = req.body;
+    const id_user = form.student;
+
+    // Obtenha a lista de IDs das matérias selecionadas
+    const selectedSubjectIds = form.subjects;
+
+    // Crie um único cronograma com os assuntos selecionados
+    const schCreated = await ScheduleModel.create({
+      user: id_user,
+      bimester: form.bimester,
+      subjects: selectedSubjectIds, // Use a lista de IDs das matérias
+    });
+
+    // Adicione o ID do cronograma criado ao usuário
+    const updatedStudent = await UserModel.findByIdAndUpdate(
+      id_user,
+      {
+        $push: { schedules: schCreated._id }, // Adicione o ID do cronograma
+      },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(201).json(updatedStudent);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+
+//GET ALL SCHEDULES
+// http://localhost:4000/school/schedule/get_all
+schoolRouter.get("/schedule/get_all", isAuth, async (req, res) => {
+  try {
+    const schedulesAll = await ScheduleModel.find();
+
+    return res.status(200).json(schedulesAll);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+
+// testando gets
+schoolRouter.get("/schedule/get/bimester1", isAuth, async (req, res) => {
+  try {
+    const schedulesBim = await ScheduleModel.find({ bimester: "1bim" });
+
+    return res.status(200).json(schedulesBim);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+
+// testando gets
+// GET SCHEDULES BY BIMESTER
+// http://localhost:4000/school/schedule/get_by_bimester/1bim
+schoolRouter.get(
+  "/schedule/get_by_bimester/:bimester",
+  isAuth,
+  async (req, res) => {
+    try {
+      const bimester = req.params.bimester;
+
+      const schedulesByBimester = await ScheduleModel.find({ bimester });
+
+      return res.status(200).json(schedulesByBimester);
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json(error);
+    }
+  }
+);
 export default schoolRouter;
+
+//OUTRAS ROTAS DO SCHEDULE Q N TESTEI
+/*
+
+scheduleRouter.get("/get_one/:id_schedule", isAuth, async (req, res) => {
+  try {
+    const id_schedule = req.params.id_schedule;
+    const schedule = await ScheduleModel.findById(id_schedule);
+
+    return res.status(200).json(schedule);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+
+//edit schedule
+// http://localhost:4000/schedule/edit/:id_schedule
+scheduleRouter.put("/edit/:id_schedule", isAuth, async (req, res) => {
+  try {
+    const id_schedule = req.params.id_schedule;
+    const form = req.body;
+
+    const updatedSchedule = await ScheduleModel.findByIdAndUpdate(
+      id_schedule,
+      { ...form },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json(updatedSchedule);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+
+// SOFT DELETE
+scheduleRouter.delete("/delete/:id_schedule", isAuth, async (req, res) => {
+  try {
+    const id_schedule = req.params.id_schedule;
+
+    const deletedSchedule = await ScheduleModel.findByIdAndUpdate(
+      id_schedule,
+      { status: "CANCELADA" },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json(deletedSchedule);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+
+//adicionar materia no aluno
+
+scheduleRouter.post("/add_schedule", isAuth, async (req, res) => {
+  try {
+    const form = req.body;
+
+    //adicionar algo na array do usuario
+    const updatedStudent = await UserModel.findByIdAndUpdate(
+      //testado e funcionando 07/09/23
+      form.id_student,
+      {
+        $push: { schedule: form.id_schedule },
+      },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json(updatedStudent);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+
+//deletar materia do usuario
+
+scheduleRouter.delete("/delete_schedule", isAuth, async (req, res) => {
+  try {
+    const form = req.body;
+
+    //adicionar algo na array do usuario
+    const updatedStudent = await UserModel.findByIdAndUpdate(
+      //testado e funcionando 07/09/23
+      form.id_student,
+      {
+        $pull: { schedule: form.id_schedule },
+      },
+      { new: true, runValidators: true }
+    );
+
+    return res.status(200).json(updatedStudent);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+*/

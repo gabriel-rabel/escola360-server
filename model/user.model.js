@@ -29,6 +29,8 @@ const userSchema = new Schema(
 
     schedule: [{ type: Schema.Types.ObjectId, ref: "Subject" }],
 
+    schedules: [{ type: Schema.Types.ObjectId, ref: "Schedule" }],
+
     firstBimester: [
       {
         subject: { type: Schema.Types.ObjectId, ref: "Subject" },

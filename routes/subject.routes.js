@@ -46,10 +46,9 @@ subjectRouter.get("/get_all", isAuth, async (req, res) => {
 subjectRouter.get("/get_one/:id_subject", isAuth, async (req, res) => {
   try {
     const id_subject = req.params.id_subject;
-    const subject = await  SubjectModel.findById(id_subject);
+    const subject = await SubjectModel.findById(id_subject);
 
     return res.status(200).json(subject);
-
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);
@@ -84,6 +83,7 @@ subjectRouter.delete("/delete/:id_subject", isAuth, async (req, res) => {
     const deletedSubject = await SubjectModel.findByIdAndUpdate(
       id_subject,
       { status: "CANCELADA" },
+      { active: false },
       { new: true, runValidators: true }
     );
 
@@ -101,7 +101,8 @@ subjectRouter.post("/add_subject", isAuth, async (req, res) => {
     const form = req.body;
 
     //adicionar algo na array do usuario
-    const updatedStudent = await UserModel.findByIdAndUpdate( //testado e funcionando 07/09/23
+    const updatedStudent = await UserModel.findByIdAndUpdate(
+      //testado e funcionando 07/09/23
       form.id_student,
       {
         $push: { schedule: form.id_subject },
@@ -123,7 +124,8 @@ subjectRouter.delete("/delete_subject", isAuth, async (req, res) => {
     const form = req.body;
 
     //adicionar algo na array do usuario
-    const updatedStudent = await UserModel.findByIdAndUpdate( //testado e funcionando 07/09/23
+    const updatedStudent = await UserModel.findByIdAndUpdate(
+      //testado e funcionando 07/09/23
       form.id_student,
       {
         $pull: { schedule: form.id_subject },
@@ -137,7 +139,5 @@ subjectRouter.delete("/delete_subject", isAuth, async (req, res) => {
     return res.status(500).json(error);
   }
 });
-
-
 
 export default subjectRouter;
