@@ -11,7 +11,7 @@ const schoolSchema = new Schema(
       trim: true,
       match: /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/, // math = regex
     },
-
+    role: { type: String, default: "SCHOOL" },
     cnpj: { type: String },
 
     logo: {
