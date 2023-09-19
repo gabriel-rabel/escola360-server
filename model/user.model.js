@@ -31,6 +31,8 @@ const userSchema = new Schema(
 
     schedules: [{ type: Schema.Types.ObjectId, ref: "Schedule" }],
 
+    notifications: [{ type: Schema.Types.ObjectId, ref: "Notification" }],
+
     firstBimester: [
       {
         subject: { type: Schema.Types.ObjectId, ref: "Subject" },
