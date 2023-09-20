@@ -108,4 +108,15 @@ notfRouter.delete("/delete/:id_notification", isAuth, async (req, res) => {
   }
 });
 
+// Endpoint para obter notificações não visualizadas e marcá-las como visualizadas
+notfRouter.get("/unviewed", (req, res) => {
+  // Consultar notificações não visualizadas
+  const unviewedNotifications = notifications.filter((n) => !n.viewed);
+
+  // Marcar todas as notificações como visualizadas
+  unviewedNotifications.forEach((n) => (n.viewed = true));
+
+  res.json(unviewedNotifications);
+});
+
 export default notfRouter;
