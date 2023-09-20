@@ -108,15 +108,35 @@ notfRouter.delete("/delete/:id_notification", isAuth, async (req, res) => {
   }
 });
 
-// Endpoint para obter notificações não visualizadas e marcá-las como visualizadas
-notfRouter.get("/unviewed", (req, res) => {
-  // Consultar notificações não visualizadas
-  const unviewedNotifications = notifications.filter((n) => !n.viewed);
+// Get de notificações não lidas
+notfRouter.get("/get_unread", isAuth, async (req, res) => {
+  try {
+    // Find all unread notifications for the user
+    const unreadNotifications = await NotificationModel.find({
+      read: false,
+    });
 
-  // Marcar todas as notificações como visualizadas
-  unviewedNotifications.forEach((n) => (n.viewed = true));
-
-  res.json(unviewedNotifications);
+    return res.status(200).json(unreadNotifications);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
 });
 
+// Rota para marcar notificações como lidas
+notfRouter.put("/mark_as_read", async (req, res) => {
+  try {
+    // Marcamos todas as notificações do usuário como lidas
+    await NotificationModel.updateMany({ read: true });
+
+    return res
+      .status(200)
+      .json({ message: "Notificações marcadas como lidas" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ error: "Erro ao marcar notificações como lidas" });
+  }
+});
 export default notfRouter;
