@@ -35,7 +35,7 @@ const userSchema = new Schema(
 
     firstBimester: [
       {
-        subject: { type: Schema.Types.ObjectId, ref: "Subject" },
+        subject: { type: String },
         note: { type: String },
         missed: { type: String },
       },
@@ -43,7 +43,7 @@ const userSchema = new Schema(
 
     secondBimester: [
       {
-        subject: { type: Schema.Types.ObjectId, ref: "Subject" },
+        subject: { type: String },
         note: { type: String },
         missed: { type: String },
       },
@@ -51,7 +51,7 @@ const userSchema = new Schema(
 
     thirdBimester: [
       {
-        subject: { type: Schema.Types.ObjectId, ref: "Subject" },
+        subject: { type: String },
         note: { type: String },
         missed: { type: String },
       },
@@ -59,7 +59,7 @@ const userSchema = new Schema(
 
     fourthBimester: [
       {
-        subject: { type: Schema.Types.ObjectId, ref: "Subject" },
+        subject: { type: String },
         note: { type: String },
         missed: { type: String },
       },
@@ -67,7 +67,7 @@ const userSchema = new Schema(
 
     finalSchedule: [
       {
-        subject: { type: Schema.Types.ObjectId, ref: "Subject" },
+        subject: { type: String },
         note: { type: String },
         missed: { type: String },
       },
