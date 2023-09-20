@@ -184,7 +184,7 @@ schoolRouter.put("/edit_one/:id_student", isAuth, async (req, res) => {
       updatedData,
       { new: true, runValidators: true }
     );
-    user.passwordHash = undefined;
+    updatedStudent.passwordHash = undefined;
 
     return res.status(200).json(updatedStudent);
   } catch (error) {
