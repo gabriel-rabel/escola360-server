@@ -151,6 +151,7 @@ schoolRouter.get("/get_one/:id_student", isAuth, async (req, res) => {
 schoolRouter.put("/edit_one/:id_student", isAuth, async (req, res) => {
   try {
     const id_student = req.params.id_student;
+    const user = req.body;
 
     const updatedData = { ...req.body };
 

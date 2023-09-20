@@ -5,6 +5,7 @@ const userSchema = new Schema(
     name: { type: String, required: true, trim: true },
 
     parentsName: { type: String, trim: true },
+  
 
     email: {
       type: String,
@@ -13,6 +14,8 @@ const userSchema = new Schema(
       trim: true,
       match: /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/, // match = regex
     },
+
+    role: { type: String, default: "USER" },
 
     class: { type: String, required: true },
 

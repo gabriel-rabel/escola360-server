@@ -13,6 +13,7 @@ export default function generateToken(user) {
          _id: user._id,
          name: user.name,
          email: user.email,
+         role: user.role,
       },
       signature, //assinatura do token
       {
