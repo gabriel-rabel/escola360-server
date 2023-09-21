@@ -3,6 +3,7 @@ import UserModel from "../model/user.model.js";
 import bcrypt from "bcrypt";
 import generateToken from "../config/jwt.config.js";
 import isAuth from "../middlewares/isAuth.js";
+import schoolModel from "../model/school.model.js";
 
 const userRouter = express.Router();
 
@@ -89,8 +90,19 @@ userRouter.get("/profile", isAuth, async (req, res) => {
   try {
     const id_user = req.auth._id;
 
-    const user = await UserModel.findById(id_user).select("-passwordHash").populate("schedule").populate("firstBimester.subject").populate("secondBimester.subject").populate("thirdBimester.subject").populate("fourthBimester.subject").populate("finalSchedule.subject");
-        return res.status(200).json(user);
+    const user = await UserModel.findById(id_user)
+      .select("-passwordHash")
+      .populate("schedule")
+      .populate("firstBimester.subject")
+      .populate("secondBimester.subject")
+      .populate("thirdBimester.subject")
+      .populate("fourthBimester.subject")
+      .populate("finalSchedule.subject");
+
+    const school = await schoolModel.find();
+    console.log(school);
+
+    return res.status(200).json({ ...user._doc, menu: school[0].menu });
   } catch (err) {
     console.log(err);
     return res.status(500).json(err);
@@ -109,7 +121,5 @@ userRouter.get("/get_all", isAuth, async (req, res) => {
     return res.status(500).json(error);
   }
 });
-
-
 
 export default userRouter;
