@@ -42,9 +42,9 @@ userRouter.post("/signup", async (req, res) => {
     user.passwordHash = undefined;
 
     return res.status(201).json(user);
-  } catch (err) {
-    console.log(err);
-    return res.status(409).json({ message: "Usuário já está cadastrado." });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Usuário já está cadastrado." });
   }
 });
 
@@ -79,9 +79,9 @@ userRouter.post("/login", async (req, res) => {
         "Email ou senha não são válidos. Por favor tenta novamente."
       );
     }
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json(err.message);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error.message);
   }
 });
 
@@ -103,9 +103,9 @@ userRouter.get("/profile", isAuth, async (req, res) => {
     console.log(school);
 
     return res.status(200).json({ ...user._doc, menu: school[0].menu });
-  } catch (err) {
-    console.log(err);
-    return res.status(500).json(err);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
   }
 });
 
