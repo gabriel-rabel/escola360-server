@@ -147,28 +147,6 @@ schoolRouter.get("/get_one/:id_student", isAuth, async (req, res) => {
   }
 });
 
-// http://localhost:4000/user/profile/get_one
-schoolRouter.get("/userprofile/get_one/:id_user", isAuth, async (req, res) => {
-  try {
-    const id_user = req.params.id_user;
-
-    const user = await UserModel.findById(id_user)
-      .select("-passwordHash")
-      .populate("firstBimester.subject")
-      .populate("secondBimester.subject")
-      .populate("thirdBimester.subject")
-      .populate("fourthBimester.subject");
-
-    const school = await schoolModel.find();
-    console.log(school);
-
-    return res.status(200).json({ ...user._doc, menu: school[0].menu });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json(error);
-  }
-});
-
 // // rota de edit para a escola editar o aluno
 // // http://localhost:4000/school/edit_one/:id_student
 schoolRouter.put("/edit_one/:id_student", isAuth, async (req, res) => {
